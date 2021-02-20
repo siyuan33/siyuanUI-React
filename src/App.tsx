@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useCallback } from "react"
+import "./App.css"
+import Button, { ButtonType, ButtonSize } from "./components/Button/index"
+import styled from "styled-components"
 
-function App() {
+const Wrapper = styled.div`
+  .btn {
+    display: block;
+    margin: 1rem auto;
+    &-link {
+      display: table;
+    }
+  }
+`
+
+const App: FC = () => {
+  const cb = useCallback(() => {}, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Wrapper>
+      <Button btnType={ButtonType.Danger} size={ButtonSize.Large} onClick={cb}>
+        Danger Large
+      </Button>
+      <Button
+        btnType={ButtonType.Link}
+        href="https://www.google.com/"
+        size={ButtonSize.Normal}
+        target="target"
+      >
+        google Normal
+      </Button>
+      <Button disable={true}>disabled</Button>
+    </Wrapper>
+  )
 }
 
-export default App;
+export default App
