@@ -1,16 +1,23 @@
-import React, { FC, memo } from "react"
+import React, { createContext, FC, memo, useState } from "react"
 import concatClass from "classnames"
 
 type MenuPropsMode = "horizontal" | "vertical"
-
+type SelectedCallback = (Index: number) => void
 export interface MenuProps {
   defaultIndex?: number
   className?: string
   mode?: MenuPropsMode
   style?: React.CSSProperties
-  onSelect?: (Index: number) => void
+  onSelect?: SelectedCallback
   children?: React.ReactNode
 }
+
+interface MenuContextInterface {
+  index: number
+  onSelect?: SelectedCallback
+}
+
+export const MenuContext = createContext<MenuContextInterface>({ index: 0 })
 
 const Menu: FC<MenuProps> = ({
   children,
@@ -20,13 +27,24 @@ const Menu: FC<MenuProps> = ({
   style,
   onSelect,
 }) => {
+  const [activeIndex, setactiveIndex] = useState(defaultIndex)
+  const handleClick = (index: number) => {
+    setactiveIndex(index)
+    onSelect && onSelect(index)
+  }
+  const passedContext: MenuContextInterface = {
+    index: activeIndex ? activeIndex : 0,
+    onSelect: handleClick,
+  }
   const classNames = concatClass("menu", className, {
     "menu-horizontal": mode === "horizontal",
     "menu-vertical": mode === "vertical",
   })
   return (
     <ul className={classNames} style={style}>
-      {children}
+      <MenuContext.Provider value={passedContext}>
+        {children}
+      </MenuContext.Provider>
     </ul>
   )
 }

@@ -1,11 +1,13 @@
-import React, { FC, memo } from "react"
+import React, { FC, memo, useCallback, useContext } from "react"
 import concatClass from "classnames"
+import { MenuContext } from "./Menu"
 
 export interface MenuItemProps {
-  index?: number
+  index: number
   disabled?: boolean
   className?: string
   style?: React.CSSProperties
+  children: React.ReactNode
 }
 
 const MenuItem: FC<MenuItemProps> = ({
@@ -15,12 +17,19 @@ const MenuItem: FC<MenuItemProps> = ({
   className,
   style,
 }) => {
+  const context = useContext(MenuContext)
+
   const classNames = concatClass("menu-item", className, {
     "is-disabled": disabled,
+    "is-active": context.index === index,
   })
-
+  const handleClick = useCallback(() => {
+    if (context.onSelect && !disabled) {
+      context.onSelect(index ? index : 0)
+    }
+  }, [])
   return (
-    <li className={classNames} style={style}>
+    <li className={classNames} style={style} onClick={handleClick}>
       {children}
     </li>
   )
