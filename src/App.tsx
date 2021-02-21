@@ -1,7 +1,9 @@
 import React, { FC, useCallback } from "react"
 import "./App.css"
-import Button, { ButtonType, ButtonSize } from "./components/Button/index"
+import Button from "./components/Button"
+import { ButtonType, ButtonSize } from "./components/Button/interface"
 import styled from "styled-components"
+// import Button from "./components/Button/index"
 
 const Wrapper = styled.div`
   .btn {

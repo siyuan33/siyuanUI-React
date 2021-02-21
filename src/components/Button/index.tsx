@@ -1,33 +1,7 @@
-import React, { FC, memo, ReactNode } from "react"
+import React, { FC, memo } from "react"
 import concatClass from "classnames"
+import { ButtonProps, ButtonType, ButtonSize } from "./interface"
 
-export enum ButtonSize {
-  Large = "lg",
-  Small = "sm",
-  Normal = "nm",
-}
-
-export enum ButtonType {
-  Primary = "primary",
-  Default = "default",
-  Danger = "danger",
-  Link = "link",
-}
-
-interface ButtonBaseProps {
-  className?: string
-  disable?: boolean
-  size?: ButtonSize
-  btnType?: ButtonType
-  children?: ReactNode
-  href?: string
-}
-
-type ButtonInterSection = ButtonBaseProps &
-  React.ButtonHTMLAttributes<HTMLElement>
-type AnchorInterSection = ButtonBaseProps &
-  React.AnchorHTMLAttributes<HTMLElement>
-export type ButtonProps = Partial<ButtonInterSection & AnchorInterSection>
 const Button: FC<ButtonProps> = (props) => {
   const {
     className,
