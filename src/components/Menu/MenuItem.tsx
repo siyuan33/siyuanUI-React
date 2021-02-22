@@ -18,6 +18,7 @@ const MenuItem: FC<MenuItemProps> = (props) => {
   })
 
   const handleClick = useCallback(() => {
+    console.log(index, "index")
     if (context.onSelect && !disabled && typeof index === "string") {
       context.onSelect(index)
     }
