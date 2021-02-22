@@ -1,60 +1,84 @@
-import React, { createContext, FC, memo, useState } from "react"
-import concatClass from "classnames"
+import React, { useState, createContext, useCallback } from "react"
+import classnames from "classnames"
+import { MenuItemProps } from "./menuItem"
 
-type MenuPropsMode = "horizontal" | "vertical"
-type SelectedCallback = (Index: number) => void
+type MenuMode = "horizontal" | "vertical"
+type SelectCallback = (selectedIndex: string) => void
+
 export interface MenuProps {
-  defaultIndex?: number
+  defaultIndex?: string
   className?: string
-  mode?: MenuPropsMode
+  mode?: MenuMode
   style?: React.CSSProperties
-  onSelect?: SelectedCallback
-  children?: React.ReactNode
+  onSelect?: SelectCallback
+  defaultOpenSubMenus?: string[]
 }
 
-interface MenuContextInterface {
-  index: number
-  onSelect?: SelectedCallback
+interface IMenuContent {
+  index: string
+  onSelect?: SelectCallback
+  mode?: MenuMode
+  defaultOpenSubMenus?: string[]
 }
 
-export const MenuContext = createContext<MenuContextInterface>({ index: 0 })
+export const MenuContext = createContext<IMenuContent>({ index: "0" })
 
-const Menu: FC<MenuProps> = ({
-  children,
-  defaultIndex,
-  className,
-  mode,
-  style,
-  onSelect,
-}) => {
-  const [activeIndex, setactiveIndex] = useState(defaultIndex)
-  const handleClick = (index: number) => {
-    setactiveIndex(index)
-    onSelect && onSelect(index)
-  }
-  const passedContext: MenuContextInterface = {
-    index: activeIndex ? activeIndex : 0,
-    onSelect: handleClick,
-  }
-  const classNames = concatClass("menu", className, {
-    "menu-horizontal": mode === "horizontal",
+const Menu: React.FC<MenuProps> = (props) => {
+  const {
+    className,
+    mode,
+    style,
+    children,
+    defaultIndex,
+    onSelect,
+    defaultOpenSubMenus,
+  } = props
+  const [currentIndex, setIndex] = useState(defaultIndex)
+
+  const classes = classnames("menu", className, {
     "menu-vertical": mode === "vertical",
+    "menu-horizontal": mode !== "vertical",
   })
+
+  const handleClick = (index: string) => {
+    setIndex(index)
+    if (onSelect) onSelect(index)
+  }
+
+  const passedContext: IMenuContent = {
+    index: currentIndex ? currentIndex : "0",
+    onSelect: handleClick,
+    mode,
+    defaultOpenSubMenus,
+  }
+
+  const renderChildren = useCallback(() => {
+    return React.Children.map(children, (child, index) => {
+      const childElement = child as React.FunctionComponentElement<MenuItemProps>
+      const { displayName } = childElement.type
+      if (displayName === "MenuItem" || displayName === "SubMenu") {
+        return React.cloneElement(childElement, { index: index.toString() })
+      } else {
+        console.error(
+          "Warning: Menu has a child which is not a MenuItem component"
+        )
+      }
+    })
+  }, [])
+
   return (
-    <ul className={classNames} style={style}>
+    <ul className={classes} style={style} data-testid="test-menu">
       <MenuContext.Provider value={passedContext}>
-        {children}
+        {renderChildren()}
       </MenuContext.Provider>
     </ul>
   )
 }
 
 Menu.defaultProps = {
-  defaultIndex: 0,
+  defaultIndex: "0",
   mode: "horizontal",
-  onSelect: (index) => {
-    console.log(index, `selected ${index}`)
-  },
+  defaultOpenSubMenus: [],
 }
 
-export default memo(Menu)
+export default Menu

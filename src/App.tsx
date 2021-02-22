@@ -3,8 +3,9 @@ import "./App.css"
 import Button from "./components/Button"
 import { ButtonType, ButtonSize } from "./components/Button/interface"
 import styled from "styled-components"
-import Menu from "./components/Menu/Menu"
-import MenuItem from "./components/Menu/MenuItem"
+import Menu from "./components/Menu/menu"
+import SubMenu from "./components/Menu/subMenu"
+import MenuItem from "./components/Menu/menuItem"
 
 const Wrapper = styled.div`
   .btn {
@@ -20,12 +21,15 @@ const App: FC = () => {
   const cb = useCallback(() => {}, [])
   return (
     <Wrapper>
-      <Menu defaultIndex={0}>
-        <MenuItem index={0}>item0</MenuItem>
-        <MenuItem index={1}>item1</MenuItem>
-        <MenuItem index={2}>item2</MenuItem>
+      <Menu defaultIndex={"0"}>
+        <MenuItem>item0</MenuItem>
+        <MenuItem>item1</MenuItem>
+        <SubMenu title={"item2"}>
+          <MenuItem>item2-0</MenuItem>
+          <MenuItem>item2-1</MenuItem>
+        </SubMenu>
       </Menu>
-      <Button btnType={ButtonType.Danger} size={ButtonSize.Large} onClick={cb}>
+      {/* <Button btnType={ButtonType.Danger} size={ButtonSize.Large} onClick={cb}>
         Danger Large
       </Button>
       <Button
@@ -36,7 +40,7 @@ const App: FC = () => {
       >
         google Normal
       </Button>
-      <Button disable={true}>disabled</Button>
+      <Button disable={true}>disabled</Button> */}
     </Wrapper>
   )
 }

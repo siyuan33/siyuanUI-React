@@ -1,37 +1,35 @@
-import React, { FC, memo, useCallback, useContext } from "react"
-import concatClass from "classnames"
-import { MenuContext } from "./Menu"
+import React, { FC, useCallback, useContext } from "react"
+import classnames from "classnames"
+import { MenuContext } from "./menu"
 
 export interface MenuItemProps {
-  index: number
+  index?: string
   disabled?: boolean
   className?: string
   style?: React.CSSProperties
-  children: React.ReactNode
 }
 
-const MenuItem: FC<MenuItemProps> = ({
-  children,
-  index,
-  disabled,
-  className,
-  style,
-}) => {
+const MenuItem: FC<MenuItemProps> = (props) => {
+  const { index, disabled, className, style, children } = props
   const context = useContext(MenuContext)
-
-  const classNames = concatClass("menu-item", className, {
+  const classes = classnames("menu-item", className, {
     "is-disabled": disabled,
     "is-active": context.index === index,
   })
+
   const handleClick = useCallback(() => {
-    if (context.onSelect && !disabled) {
-      context.onSelect(index ? index : 0)
+    if (context.onSelect && !disabled && typeof index === "string") {
+      context.onSelect(index)
     }
   }, [])
+
   return (
-    <li className={classNames} style={style} onClick={handleClick}>
+    <li className={classes} style={style} onClick={handleClick}>
       {children}
     </li>
   )
 }
-export default memo(MenuItem)
+
+MenuItem.displayName = "MenuItem"
+
+export default MenuItem
